@@ -121,7 +121,6 @@ class PowerListView extends ListView {
 
   @override
   Widget buildChildLayout(BuildContext context) {
-    print(physics);
     if (controller is PowerListPageScrollController) {
       return PowerSliverFillViewportRenderObjectWidget(
         viewportFraction:

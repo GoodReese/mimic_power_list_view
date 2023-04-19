@@ -7,6 +7,7 @@ import 'package:flutter/physics.dart';
 class SimulationTurnPagePainterHelper {
   Offset mTouch = Offset.zero;
   Size currentSize = Size.zero;
+  Color bgColor = Colors.white;
 
   Offset mBezierStart1 = Offset.zero; // 贝塞尔曲线起始点
   Offset mBezierControl1 = Offset.zero; // 贝塞尔曲线控制点
@@ -382,7 +383,7 @@ class SimulationTurnPagePainterHelper {
     canvas.clipPath(mTopBackAreaPagePath);
 
     ///todo 改为背景色
-    canvas.drawColor(Colors.yellow, BlendMode.src);
+    canvas.drawColor(bgColor ?? Colors.yellow, BlendMode.src);
 
     canvas.save();
 

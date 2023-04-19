@@ -8,7 +8,8 @@ import '../turn_mode/simulation/power_list_simulation_layout_manager.dart';
 
 enum ReaderTurnPageMode { normalMode, coverMode, simulationMode }
 
-ScrollController? buildNovelScrollController(ReaderTurnPageMode turnPageMode) {
+PowerListPageScrollController? buildNovelScrollController(
+    ReaderTurnPageMode turnPageMode) {
   switch (turnPageMode) {
     case ReaderTurnPageMode.coverMode:
       return PowerListPageScrollController();
@@ -20,12 +21,13 @@ ScrollController? buildNovelScrollController(ReaderTurnPageMode turnPageMode) {
   }
 }
 
-LayoutManager? buildNovelLayoutManager(ReaderTurnPageMode turnPageMode) {
+LayoutManager? buildNovelLayoutManager(
+    ReaderTurnPageMode turnPageMode, Color bgColor) {
   switch (turnPageMode) {
     case ReaderTurnPageMode.coverMode:
       return PowerListCoverLayoutManager();
     case ReaderTurnPageMode.simulationMode:
-      return PowerListSimulationTurnLayoutManager();
+      return PowerListSimulationTurnLayoutManager(bgColor: bgColor);
     case ReaderTurnPageMode.normalMode:
     default:
       return PowerListLinearLayoutManager();

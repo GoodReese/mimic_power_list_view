@@ -18,7 +18,9 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
 
   BuildContext? _context;
 
-  PowerListSimulationTurnLayoutManager({this.logTag});
+  Color? bgColor;
+
+  PowerListSimulationTurnLayoutManager({this.logTag, this.bgColor});
 
   @override
   void bind(RenderSliverMultiBoxAdaptor sliver, BuildContext context) {
@@ -116,6 +118,11 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
 
     /// 设置范围
     helper.currentSize = firstPageChild.size;
+
+    /// 背景色
+    if (bgColor != null) {
+      helper.bgColor = bgColor!;
+    }
 
     /// 分发手势事件
     if (_gestureDataNotify != null && _gestureDataNotify.pointerEvent != null) {
