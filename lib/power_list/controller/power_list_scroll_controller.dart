@@ -171,7 +171,7 @@ class PowerListScrollPositionWithSingleContext extends PowerListPosition
         physics.createBallisticSimulation(this, velocity);
     if (simulation != null) {
       beginActivity(
-          BallisticScrollActivity(this, simulation, context.vsync, false));
+          BallisticScrollActivity(this, simulation, context.vsync, true));
     } else {
       goIdle();
     }

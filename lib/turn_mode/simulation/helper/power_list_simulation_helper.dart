@@ -480,7 +480,7 @@ class SimulationTurnPagePainterHelper {
             ..shader = ui.Gradient.linear(
                 shadowAreaRect.topCenter,
                 shadowAreaRect.bottomCenter,
-                [Colors.transparent, Color(0xAA000000), Colors.transparent],
+                [Colors.transparent, Colors.black12, Colors.transparent],
                 [0.0, 0.5, 1.0]));
     }
 
