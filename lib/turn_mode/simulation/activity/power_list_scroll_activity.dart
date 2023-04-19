@@ -85,7 +85,7 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
               position.pixels >= to
                   ? position.pixels - position.viewportDimension
                   : position.pixels + position.viewportDimension,
-              duration: Duration(milliseconds: 100),
+              duration: Duration(milliseconds: 200),
               curve: Curves.linear)
           .whenComplete(_end);
   }
@@ -294,7 +294,7 @@ class PowerListBallisticScrollActivity extends ScrollActivity {
   }
 
   @override
-  bool get shouldIgnorePointer => true;
+  bool get shouldIgnorePointer => false;
 
   @override
   bool get isScrolling => true;
