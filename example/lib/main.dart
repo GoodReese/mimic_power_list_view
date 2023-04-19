@@ -135,6 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     for (String content in contentList) {
       pageList.add(Container(
+        padding: EdgeInsets.only(left: 15, right: 15),
         color: Colors.white,
         child: Text(
           content,
