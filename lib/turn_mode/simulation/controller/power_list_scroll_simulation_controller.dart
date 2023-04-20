@@ -86,6 +86,10 @@ class PowerListScrollSimulationPosition extends PowerListPagePosition {
     final Simulation? simulation =
         physics.createBallisticSimulation(this, velocity);
     if (simulation != null) {
+      simulation.tolerance = const Tolerance(
+          distance: 100,
+          time: 100,
+          velocity: 100); // 修复了问题3 结尾0斗争的问题 todo 回头抽出来可配置
       beginActivity(
           PowerListBallisticScrollActivity(this, simulation, context.vsync));
     } else {

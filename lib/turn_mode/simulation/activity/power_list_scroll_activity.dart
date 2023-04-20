@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -6,9 +5,9 @@ import 'package:flutter/material.dart';
 
 import '../controller/power_list_scroll_simulation_controller.dart';
 
-// todo 1.修复偶尔手指向左滑动却触发了上一页的动画 或者说 向右滑动却触发下一页的动画
+// 1.修复偶尔手指向左滑动却触发了上一页的动画 或者说 向右滑动却触发下一页的动画 (修复3也就修复了1)
 //   2.修复某些情况下开始动画丢失的问题
-// todo 3.修复动画结尾跟0斗争迟迟无法结束的问题 这应该是问题1的原因
+// 3.修复动画结尾跟0斗争迟迟无法结束的问题 这应该是问题1的原因 通过调大tolerance修复了
 //   4.手指开始拖动后才触发动画
 class PowerListSimulationScrollDragController extends ScrollDragController {
   PowerListSimulationScrollDragController({
@@ -103,8 +102,8 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
                   ? position.pixels - position.viewportDimension
                   : position.pixels + position.viewportDimension,
               duration:
-                  const Duration(milliseconds: 300), // 动画执行时间 这个就不要改动了 目前测试最佳
-              curve: Curves.easeOut)
+                  const Duration(milliseconds: 400), // 动画执行时间 这个就不要改动了 目前测试最佳
+              curve: Curves.linear)
           .whenComplete(_end);
   }
 
@@ -296,16 +295,6 @@ class PowerListBallisticScrollActivity extends ScrollActivity {
   /// and returns true if the overflow was zero.
   @protected
   bool applyMoveTo(double value) {
-    // print("velocity = " + velocity.toString());
-    // print("value = " + value.toString());
-
-    // if (value < 1 ||
-    //     (359 < value && value < 361) ||
-    //     (719 < value && value < 721) ||
-    //     (1079 < value && value < 1081)) {
-    //   _end(); // todo 避免在0.几进行归零斗争 虽然做了判定 但是这里似乎无法正确结束动画
-    //   return false;
-    // }
     return delegate.setPixels(value) == 0.0;
   }
 
