@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,10 @@ import 'package:flutter/material.dart';
 
 import '../controller/power_list_scroll_simulation_controller.dart';
 
+// todo 1.修复偶尔手指向左滑动却触发了上一页的动画 或者说 向右滑动却触发下一页的动画
+//   2.修复某些情况下开始动画丢失的问题
+// todo 3.修复动画结尾跟0斗争迟迟无法结束的问题 这应该是问题1的原因
+//   4.手指开始拖动后才触发动画
 class PowerListSimulationScrollDragController extends ScrollDragController {
   PowerListSimulationScrollDragController({
     required PowerListScrollSimulationPosition delegate,
@@ -29,8 +34,19 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
 
   double targetDx = 0;
 
+  bool isDragging = false; // 拖动才触发
+
   @override
   void update(DragUpdateDetails details) {
+    if (!isDragging) {
+      if (details.primaryDelta != null && details.primaryDelta!.abs() > 0.4) {
+        // 增加短时拖动超过一定范围才触发翻页动画 此处修复问题4
+        isDragging = true;
+      } else {
+        return;
+      }
+    }
+
     /// 如果是边界操作，那么走默认逻辑；
     if (((details.primaryDelta ?? 0) >= 0 &&
             position.pixels <= position.minScrollExtent) ||
@@ -69,6 +85,7 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
   }
 
   void clearAnimation() {
+    isDragging = false;
     _controller?.dispose();
     _controller = null;
   }
@@ -85,9 +102,30 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
               position.pixels >= to
                   ? position.pixels - position.viewportDimension
                   : position.pixels + position.viewportDimension,
-              duration: Duration(milliseconds: 200),
-              curve: Curves.linear)
+              duration:
+                  const Duration(milliseconds: 300), // 动画执行时间 这个就不要改动了 目前测试最佳
+              curve: Curves.easeOut)
           .whenComplete(_end);
+  }
+
+  void _tick() {
+    var pixel = _controller?.value ?? 0;
+    if ((_controller?.velocity ?? 0) <= 0
+        ? pixel <= targetDx
+        : pixel >= targetDx) {
+      if (pixel.abs() - targetDx.abs() < 40) {
+        // 小于一定范围才允许stop 避免动画闪烁或者动画丢失的感觉 此处修复问题2
+        _controller?.stop();
+        pixel = targetDx;
+      }
+    }
+    if (delegate.setPixels(pixel) != 0.0) {
+      delegate.goIdle();
+    }
+  }
+
+  void _end() {
+    delegate.goBallistic(0.0);
   }
 
   double calTargetDx(DragUpdateDetails details, double delta) {
@@ -113,24 +151,6 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
       return round;
     }
     return actual;
-  }
-
-  void _tick() {
-    var pixel = _controller?.value ?? 0;
-
-    if ((_controller?.velocity ?? 0) <= 0
-        ? pixel <= targetDx
-        : pixel >= targetDx) {
-      _controller?.stop();
-      pixel = targetDx;
-    }
-    if (delegate.setPixels(pixel) != 0.0) {
-      delegate.goIdle();
-    }
-  }
-
-  void _end() {
-    delegate.goBallistic(0.0);
   }
 
   bool isRunningAnimation() {
@@ -239,6 +259,7 @@ class PowerListBallisticScrollActivity extends ScrollActivity {
     Simulation simulation,
     TickerProvider vsync,
   ) : super(delegate) {
+    // 松手动画
     _controller = AnimationController.unbounded(
       debugLabel: kDebugMode
           ? objectRuntimeType(this, 'BallisticScrollActivity')
@@ -246,7 +267,7 @@ class PowerListBallisticScrollActivity extends ScrollActivity {
       vsync: vsync,
     )
       ..addListener(_tick)
-      ..animateWith(simulation)
+      ..animateWith(simulation) // 动画完毕后触发end 这里动画结束有个跟0斗争的过程 需要修复
           .whenComplete(_end); // won't trigger if we dispose _controller first
   }
 
@@ -275,6 +296,16 @@ class PowerListBallisticScrollActivity extends ScrollActivity {
   /// and returns true if the overflow was zero.
   @protected
   bool applyMoveTo(double value) {
+    // print("velocity = " + velocity.toString());
+    // print("value = " + value.toString());
+
+    // if (value < 1 ||
+    //     (359 < value && value < 361) ||
+    //     (719 < value && value < 721) ||
+    //     (1079 < value && value < 1081)) {
+    //   _end(); // todo 避免在0.几进行归零斗争 虽然做了判定 但是这里似乎无法正确结束动画
+    //   return false;
+    // }
     return delegate.setPixels(value) == 0.0;
   }
 
@@ -294,7 +325,7 @@ class PowerListBallisticScrollActivity extends ScrollActivity {
   }
 
   @override
-  bool get shouldIgnorePointer => false;
+  bool get shouldIgnorePointer => true;
 
   @override
   bool get isScrolling => true;

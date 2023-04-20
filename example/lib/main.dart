@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _testView() {
     List<Widget> pageList = [];
     List<String> contentList = [
-      '''Android，另一个软件包用于网络，另一个软件包用于汽车（作为物联网设备的例子）。除其他好处外，这种方法允许域专家扩展现有插件，以为他们最熟悉的平台工作。
+      '''1 Android，另一个软件包用于网络，另一个软件包用于汽车（作为物联网设备的例子）。除其他好处外，这种方法允许域专家扩展现有插件，以为他们最熟悉的平台工作。
 
 联合插件需要以下软件包：
 
@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
 平台接口包
 将面向应用程序的包装粘在平台包装上的包装。此软件包声明了任何平台软件包必须实现的接口，以支持面向应用程序的软件包。拥有定义此接口的单个软件包可确保所有平台软件包以统一的方式实现相同的功能。
 ''',
-      '''理想情况下，在向联合插件添加平台实现时，您将与软件包作者协调以包括您的实现。通过这种方式，原作者认可您的实施。
+      '''2 理想情况下，在向联合插件添加平台实现时，您将与软件包作者协调以包括您的实现。通过这种方式，原作者认可您的实施。
 
 例如，假设您为（想象中的）foobar插件编写foobar_windows实现。在认可的插件中，原始foobar作者将您的Windows实现添加为面向应用程序的软件包的pubspec中的依赖项。然后，当开发人员在其Flutter应用程序中包含foobar插件时，Windows实现以及其他认可的实现将自动提供给该应用程序。
 
@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
 有关联合插件的更多信息，为什么它们有用，以及如何实现它们，请参阅Harry Terkelsen的Medium文章，如何编写Flutter Web插件，第2部分。
 
 ''',
-      '''Android，另一个软件包用于网络，另一个软件包用于汽车（作为物联网设备的例子）。除其他好处外，这种方法允许域专家扩展现有插件，以为他们最熟悉的平台工作。
+      '''3 Android，另一个软件包用于网络，另一个软件包用于汽车（作为物联网设备的例子）。除其他好处外，这种方法允许域专家扩展现有插件，以为他们最熟悉的平台工作。
 
 联合插件需要以下软件包：
 
@@ -122,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 平台接口包
 将面向应用程序的包装粘在平台包装上的包装。此软件包声明了任何平台软件包必须实现的接口，以支持面向应用程序的软件包。拥有定义此接口的单个软件包可确保所有平台软件包以统一的方式实现相同的功能3。
 ''',
-      '''理想情况下，在向联合插件添加平台实现时，您将与软件包作者协调以包括您的实现。通过这种方式，原作者认可您的实施。
+      '''4 理想情况下，在向联合插件添加平台实现时，您将与软件包作者协调以包括您的实现。通过这种方式，原作者认可您的实施。
 
 例如，假设您为（想象中的）foobar插件编写foobar_windows实现。在认可的插件中，原始foobar作者将您的Windows实现添加为面向应用程序的软件包的pubspec中的依赖项。然后，当开发人员在其Flutter应用程序中包含foobar插件时，Windows实现以及其他认可的实现将自动提供给该应用程序。
 
@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return MimicPowerListView.builder(
       key: ValueKey("hor"),
       scrollDirection: Axis.horizontal,
-      physics: PageScrollPhysics(),
+      physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
       semanticChildCount: pageList.length,
       addRepaintBoundaries: false,
       controller: buildNovelScrollController(ReaderTurnPageMode.simulationMode),
