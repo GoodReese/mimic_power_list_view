@@ -17,6 +17,10 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
     double? carriedVelocity,
     double? motionStartDistanceThreshold,
     required TickerProvider vsync,
+    this.minStartDragDelta,
+    this.startAnimationEffect,
+    this.startAnimationMillseconds,
+    this.minDragStopDistance,
   })  : position = delegate,
         vsync = vsync,
         super(
@@ -35,10 +39,19 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
 
   bool isDragging = false; // 拖动才触发
 
+  final double? minStartDragDelta; // 短时拖动超过一定范围才触发翻页动画
+
+  final int? startAnimationMillseconds; // 开始动画的执行时间
+
+  final Curve? startAnimationEffect;
+
+  final double? minDragStopDistance; // 小于一定范围才允许stop 修复问题2
+
   @override
   void update(DragUpdateDetails details) {
     if (!isDragging) {
-      if (details.primaryDelta != null && details.primaryDelta!.abs() > 0.4) {
+      if (details.primaryDelta != null &&
+          details.primaryDelta!.abs() > (minStartDragDelta ?? 0.4)) {
         // 增加短时拖动超过一定范围才触发翻页动画 此处修复问题4
         isDragging = true;
       } else {
@@ -101,9 +114,10 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
               position.pixels >= to
                   ? position.pixels - position.viewportDimension
                   : position.pixels + position.viewportDimension,
-              duration:
-                  const Duration(milliseconds: 400), // 动画执行时间 这个就不要改动了 目前测试最佳
-              curve: Curves.linear)
+              duration: Duration(
+                  milliseconds: startAnimationMillseconds ??
+                      400), // 动画执行时间 这个就不要改动了 目前测试最佳
+              curve: startAnimationEffect ?? Curves.linear)
           .whenComplete(_end);
   }
 
@@ -112,7 +126,7 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
     if ((_controller?.velocity ?? 0) <= 0
         ? pixel <= targetDx
         : pixel >= targetDx) {
-      if (pixel.abs() - targetDx.abs() < 40) {
+      if (pixel.abs() - targetDx.abs() < (minDragStopDistance ?? 40)) {
         // 小于一定范围才允许stop 避免动画闪烁或者动画丢失的感觉 此处修复问题2
         _controller?.stop();
         pixel = targetDx;
